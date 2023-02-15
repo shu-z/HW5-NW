@@ -153,6 +153,8 @@ class NeedlemanWunsch:
         self._gapA_matrix[:, 0]=self.gap_open+ np.arange(0, nA+1)*self.gap_extend
         self._gapB_matrix[0, :]= self.gap_open+ np.arange(0, nB+1) *self.gap_extend
 
+   
+
 
        
         
@@ -202,6 +204,7 @@ class NeedlemanWunsch:
 
                 self._back[i,j]=np.argmax([self._align_matrix[i,j], self._gapA_matrix[i,j], self._gapB_matrix[i,j]])
 	
+        #print(self._align_matrix)
     	    
         return self._backtrace()
 
@@ -221,6 +224,7 @@ class NeedlemanWunsch:
          	(alignment score, seqA alignment, seqB alignment) : Tuple[float, str, str]
          		the score and corresponding strings for the alignment of seqA and seqB
         """
+        
         #i for rows, j for columns
         i=len(self._seqA)
         j=len(self._seqB)
@@ -235,18 +239,21 @@ class NeedlemanWunsch:
          
           
         
+        
+        
+        
+        
         while i>0 or j>0:
+
             idx=self._back[i,j]
 
             #diagonal
-            if idx==0:
-               
+            if idx==0:            
                 i-=1
                 j-=1
 
                 align_seqA+=self._seqA[i]
                 align_seqB+=self._seqB[j]
-
 
             #left
             elif idx==1:
@@ -256,15 +263,26 @@ class NeedlemanWunsch:
                 align_seqA+="-"
                 align_seqB+=self._seqB[j]
 
-
             #up
-            elif idx==2:
-                
+            elif idx==2:                
                 i-=1
 
                 #add gap to seqB
                 align_seqA+=self._seqA[i]
                 align_seqB+="-"
+
+
+            #deals with large gaps at start
+            #otherwise idx is inf and keeps looping
+            elif i==0:
+                align_seqA+="-"
+                align_seqB+=self._seqB[j]
+                j-=1
+
+            elif j==0:
+                align_seqA+=self._seqA[i]
+                align_seqB+="-"
+                i-=1
 
 
         #return reversed 
