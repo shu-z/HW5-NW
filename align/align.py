@@ -150,8 +150,8 @@ class NeedlemanWunsch:
          #initialize first rows/columns of alignment and gap matrices 
         self._align_matrix[0,0]=0
         #if either gap in seqA or seqB 
-        self._gapA_matrix[1:, 0]=self.gap_open+ np.arange(1, nA+1)*self.gap_extend
-        self._gapB_matrix[0, 1:]= self.gap_open+ np.arange(1, nB+1) *self.gap_extend
+        self._gapA_matrix[:, 0]=self.gap_open+ np.arange(0, nA+1)*self.gap_extend
+        self._gapB_matrix[0, :]= self.gap_open+ np.arange(0, nB+1) *self.gap_extend
 
 
        
@@ -179,31 +179,36 @@ class NeedlemanWunsch:
                                           self._gapB_matrix[i-1, j-1]])
                 
                 self._align_matrix[i,j]=max(rel2)
-                self._back = np.argmax(rel2)
+                #self._back = np.argmax(rel2)
        
                 
                 
                 #recurrence relation 1
                 rel1= [ self._align_matrix[i, j-1] + g, 
-                       self._gapA_matrix[i, j-1], 
+                       self._gapA_matrix[i, j-1] + self.gap_extend, 
                        self._gapB_matrix[i, j-1] + g]
                 
                 self._gapA_matrix[i,j]=max(rel1)
-                self._back_A = np.argmax(rel1)
+                #self._back_A = np.argmax(rel1)
      
                 
                 
                 #recurrence relation 3    
                 rel3= [ self._align_matrix[i-1,j] + g, 
-                       self._gapA_matrix[i-1, j], 
-                       self._gapB_matrix[i, j-1] + g]
+                       self._gapA_matrix[i-1, j] + g, 
+                       self._gapB_matrix[i-1, j] + self.gap_extend]
                 self._gapB_matrix[i,j]=max(rel3)
-                self._back_B = np.argmax(rel3)
+                #self._back_B = np.argmax(rel3)
+
+                self._back=np.argmax([self._align_matrix[i,j], self._gapA_matrix[i,j], self._gapB_matrix[i,j]])
 
  
         
-        return( self._align_matrix)     		
-        		    
+        print( self._align_matrix)    
+        print( self._gapA_matrix)  
+        print( self._gapB_matrix)   
+	
+        pass	    
         #return self._backtrace()
 
 
@@ -222,9 +227,20 @@ class NeedlemanWunsch:
          	(alignment score, seqA alignment, seqB alignment) : Tuple[float, str, str]
          		the score and corresponding strings for the alignment of seqA and seqB
         """
+
+        i=len(self.seqA)
+        j=len(self.seqB)
+
+
+
+
+        #loop through all tiles starting bottom right
+        #for i in range(1, nA+1):
+        #    for j in range(1, nB+1):
+
         pass
 
-        return (self.alignment_score, self.seqA_align, self.seqB_align)
+        #return (self.alignment_score, self.seqA_align, self.seqB_align)
 
 
 
