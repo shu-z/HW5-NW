@@ -200,13 +200,14 @@ class NeedlemanWunsch:
                 self._gapB_matrix[i,j]=max(rel3)
                 #self._back_B = np.argmax(rel3)
 
-                self._back=np.argmax([self._align_matrix[i,j], self._gapA_matrix[i,j], self._gapB_matrix[i,j]])
+                self._back[i,j]=np.argmax([self._align_matrix[i,j], self._gapA_matrix[i,j], self._gapB_matrix[i,j]])
 
  
         
         print( self._align_matrix)    
         print( self._gapA_matrix)  
-        print( self._gapB_matrix)   
+        print( self._gapB_matrix)  
+        print(self._back)
 	
         pass	    
         #return self._backtrace()
@@ -232,6 +233,7 @@ class NeedlemanWunsch:
         j=len(self.seqB)
 
 
+        #while 
 
 
         #loop through all tiles starting bottom right
