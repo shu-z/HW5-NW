@@ -1,3 +1,5 @@
+![BuildStatus](https://github.com/shu-z/HW5-NW/actions/workflows/main.yml/badge.svg)
+
 # Project 4
 Needleman Wunsch Algorithm
 

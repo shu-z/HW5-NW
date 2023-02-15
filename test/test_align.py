@@ -16,7 +16,7 @@ def test_nw_alignment():
     seq2, _ = read_fasta("./data/test_seq2.fa")
 
     NW=NeedlemanWunsch(sub_matrix_file='./substitution_matrices/BLOSUM62.mat', gap_open=-10, gap_extend=-1)
-    align_seq1_seq2=NW.align(seq1,seq2)
+    seq1seq2_score, seq1_aligned, seq2_aligned=NW.align(seq1,seq2)
 
     expected_align=np.array([[0., -np.inf, -np.inf, -np.inf ],
                             [-np.inf,   5, -11, -13],
@@ -52,9 +52,16 @@ def test_nw_backtrace():
     Use the BLOSUM62 matrix. Use a gap open
     penalty of -10 and a gap extension penalty of -1.
     """
+    
     seq3, _ = read_fasta("./data/test_seq3.fa")
     seq4, _ = read_fasta("./data/test_seq4.fa")
-    pass
+    
+    NW=NeedlemanWunsch(sub_matrix_file='./substitution_matrices/BLOSUM62.mat', gap_open=-10, gap_extend=-1)
+    seq3seq4_score, seq3_aligned, seq4_aligned=NW.align(seq3,seq4)
+
+    assert seq3seq4_score==17, "alignment score incorrect"
+    assert seq3_aligned=="MAVHQLIRRP", "seq3 is aligned incorrectly"
+    assert seq4_aligned=="M---QLIRHP", "seq4 is aligned incorrectly"
 
 
 
