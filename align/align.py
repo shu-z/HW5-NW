@@ -201,16 +201,9 @@ class NeedlemanWunsch:
                 #self._back_B = np.argmax(rel3)
 
                 self._back[i,j]=np.argmax([self._align_matrix[i,j], self._gapA_matrix[i,j], self._gapB_matrix[i,j]])
-
- 
-        
-        print( self._align_matrix)    
-        print( self._gapA_matrix)  
-        print( self._gapB_matrix)  
-        print(self._back)
 	
-        pass	    
-        #return self._backtrace()
+    	    
+        return self._backtrace()
 
 
 
@@ -228,21 +221,58 @@ class NeedlemanWunsch:
          	(alignment score, seqA alignment, seqB alignment) : Tuple[float, str, str]
          		the score and corresponding strings for the alignment of seqA and seqB
         """
+        #i for rows, j for columns
+        i=len(self._seqA)
+        j=len(self._seqB)
 
-        i=len(self.seqA)
-        j=len(self.seqB)
+        align_seqA=""
+        align_seqB=""
+         
+
+        self.alignment_score=max(self._align_matrix[i, j], 
+                                 self._gapA_matrix[i, j],
+                                 self._gapB_matrix[i, j],)
+         
+          
+        
+        while i>0 or j>0:
+            idx=self._back[i,j]
+
+            #diagonal
+            if idx==0:
+               
+                i-=1
+                j-=1
+
+                align_seqA+=self._seqA[i]
+                align_seqB+=self._seqB[j]
 
 
-        #while 
+            #left
+            elif idx==1:
+                j-=1
+
+                #add gap to seqA
+                align_seqA+="-"
+                align_seqB+=self._seqB[j]
 
 
-        #loop through all tiles starting bottom right
-        #for i in range(1, nA+1):
-        #    for j in range(1, nB+1):
+            #up
+            elif idx==2:
+                
+                i-=1
 
-        pass
+                #add gap to seqB
+                align_seqA+=self._seqA[i]
+                align_seqB+="-"
 
-        #return (self.alignment_score, self.seqA_align, self.seqB_align)
+
+        #return reversed 
+        self.seqA_align=align_seqA[::-1]
+        self.seqB_align=align_seqB[::-1]
+     
+
+        return (self.alignment_score, self.seqA_align, self.seqB_align)
 
 
 
