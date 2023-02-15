@@ -98,6 +98,8 @@ class NeedlemanWunsch:
                     break
         return dict_sub
 
+
+
     def align(self, seqA: str, seqB: str) -> Tuple[float, str, str]:
         """
         TODO
@@ -128,13 +130,83 @@ class NeedlemanWunsch:
         
         # TODO: Initialize matrix private attributes for use in alignment
         # create matrices for alignment scores, gaps, and backtracing
-        pass
 
+
+        nA=len(seqA)
+        nB=len(seqB)
+
+        #init alignment and gap matrices
+        self._align_matrix = -np.ones([nA+1, nB+1])* np.inf
+        self._gapA_matrix = -np.ones([nA+1, nB+1])* np.inf
+        self._gapB_matrix = -np.ones([nA+1, nB+1])* np.inf
+
+        #initialize back matrix
+        self._back=-np.ones([nA+1, nB+1])* np.inf
+        self._back_A = -np.ones([nA+1, nB+1])* np.inf
+        self._back_B = -np.ones([nA+1, nB+1])* np.inf
+
+
+
+         #initialize first rows/columns of alignment and gap matrices 
+        self._align_matrix[0,0]=0
+        #if either gap in seqA or seqB 
+        self._gapA_matrix[1:, 0]=self.gap_open+ np.arange(1, nA+1)*self.gap_extend
+        self._gapB_matrix[0, 1:]= self.gap_open+ np.arange(1, nB+1) *self.gap_extend
+
+
+       
         
+
+
+
         # TODO: Implement global alignment here
-        pass      		
+        g=self.gap_open+self.gap_extend
+
+
+        #loop through each tile in matrix
+        for i in range(1, nA+1):
+            for j in range(1, nB+1):
+                
+                        
+        #recurrence relation needs to also return the matrix idx 
+        #that gave the lowest value for that cell     
+                
+                #recurrence relation 2
+                sub_val=self.sub_dict[(seqA[i-1], seqB[j-1])]
+                #print(sub_val)
+                rel2= sub_val + np.array([self._align_matrix[i-1, j-1], 
+                                          self._gapA_matrix[i-1, j-1], 
+                                          self._gapB_matrix[i-1, j-1]])
+                
+                self._align_matrix[i,j]=max(rel2)
+                self._back = np.argmax(rel2)
+       
+                
+                
+                #recurrence relation 1
+                rel1= [ self._align_matrix[i, j-1] + g, 
+                       self._gapA_matrix[i, j-1], 
+                       self._gapB_matrix[i, j-1] + g]
+                
+                self._gapA_matrix[i,j]=max(rel1)
+                self._back_A = np.argmax(rel1)
+     
+                
+                
+                #recurrence relation 3    
+                rel3= [ self._align_matrix[i-1,j] + g, 
+                       self._gapA_matrix[i-1, j], 
+                       self._gapB_matrix[i, j-1] + g]
+                self._gapB_matrix[i,j]=max(rel3)
+                self._back_B = np.argmax(rel3)
+
+ 
+        
+        return( self._align_matrix)     		
         		    
-        return self._backtrace()
+        #return self._backtrace()
+
+
 
     def _backtrace(self) -> Tuple[float, str, str]:
         """
@@ -153,6 +225,8 @@ class NeedlemanWunsch:
         pass
 
         return (self.alignment_score, self.seqA_align, self.seqB_align)
+
+
 
 
 def read_fasta(fasta_file: str) -> Tuple[str, str]:
